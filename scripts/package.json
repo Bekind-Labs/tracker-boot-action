@@ -4,9 +4,9 @@
 	"main": "index.js",
 	"type": "module",
 	"scripts": {
-		"notifier": "node main.ts",
+		"action": "node main.ts",
 		"lint": "biome format --write && biome lint --fix",
-		"test": "vitest --watch"
+		"test": "vitest --no-watch"
 	},
 	"keywords": [],
 	"author": "",
@@ -19,6 +19,7 @@
 		"vitest": "^3.2.4"
 	},
 	"dependencies": {
+		"@actions/core": "^1.11.1",
 		"dotenv": "^17.2.3",
 		"uuid": "^13.0.0"
 	}

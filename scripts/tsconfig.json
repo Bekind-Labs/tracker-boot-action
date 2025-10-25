@@ -7,7 +7,7 @@
 		"declaration": true,
 		"declarationMap": true,
 		"noUncheckedIndexedAccess": true,
-		"exactOptionalPropertyTypes": true,
+		"exactOptionalPropertyTypes": false,
 		"strict": true,
 		"jsx": "react-jsx",
 		"verbatimModuleSyntax": true,
@@ -15,6 +15,6 @@
 		"noUncheckedSideEffectImports": true,
 		"moduleDetection": "force",
 		"skipLibCheck": true,
-		"allowImportingTsExtensions": true
+		"allowImportingTsExtensions": true,
 	}
 }

@@ -1,0 +1,31 @@
+name: Test Custom Action
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'action.yml'
+      - 'scripts/**'
+
+jobs:
+  test-all-cases:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test-case:
+          - { job: "success", commit: "${{ github.event.head_commit.message }}" }
+          - { job: "failure", commit: "${{ github.event.head_commit.message }}" }
+    steps:
+      - name: Checkout Action Code
+        uses: actions/checkout@v4
+      - name: Simulate Job Failure
+        if: ${{ matrix.test-case.job == 'failure' }}
+        run: exit 1
+      - name: Run Tracker Boot Action
+        uses: ./
+        if: always()
+        with:
+          tracker-boot-api-token: ${{ secrets.TRACKER_BOOT_API_TOKEN }}
+          project-id: "100000025"
+          job-status: ${{ job.status }}

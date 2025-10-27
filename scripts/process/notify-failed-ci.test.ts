@@ -14,16 +14,17 @@ describe("notify-failed-ci", () => {
 
 		await sut.run({
 			workflowUrl: "https://github.com/actions/pipeline/id",
+			commitUrl:
+				"https://github.com/actions/aaa/commit/294a6091da868069a08330988a27fcbf3b2cd88a",
 			commitHash: "294a6091da868069a08330988a27fcbf3b2cd88a",
 		});
 
 		expect(spyGetMe).toHaveBeenCalledTimes(1);
 		expect(spyCreatStory).toHaveBeenCalledWith({
 			personId: 1000,
-			title:
-				"Actions failed for 294a6091da868069a08330988a27fcbf3b2cd88a commit",
+			title: "Actions failed for 294a609 commit",
 			description:
-				"### Github Actions Link\n- https://github.com/actions/pipeline/id",
+				"### Github Actions Link\n- https://github.com/actions/pipeline/id\n- https://github.com/actions/aaa/commit/294a6091da868069a08330988a27fcbf3b2cd88a",
 			storyType: "Chore",
 		});
 	});
@@ -32,16 +33,28 @@ describe("notify-failed-ci", () => {
 		{
 			request: {
 				commitHash: "294a6091da868069a08330988a27fcbf3b2cd88a",
+				commitUrl:
+					"https://github.com/actions/aaa/commit/294a6091da868069a08330988a27fcbf3b2cd88a",
 			},
 			expectedError:
 				"[workflow-url] is not existed for [notify-failed-ci] command",
 		},
 		{
 			request: {
+				commitUrl:
+					"https://github.com/actions/aaa/commit/294a6091da868069a08330988a27fcbf3b2cd88a",
 				workflowUrl: "https://github.com/actions/pipeline/id",
 			},
 			expectedError:
 				"[commit-hash] is not existed for [notify-failed-ci] command",
+		},
+		{
+			request: {
+				commitHash: "294a6091da868069a08330988a27fcbf3b2cd88a",
+				workflowUrl: "https://github.com/actions/pipeline/id",
+			},
+			expectedError:
+				"[commit-url] is not existed for [notify-failed-ci] command",
 		},
 	])(
 		"given required parameter is not existed, when run notify-failed-ci, then throw an error",

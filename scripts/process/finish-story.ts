@@ -5,6 +5,7 @@ export const run = async (storyId?: string) => {
 	if (!storyId) {
 		throw new Error("[story-id] is not existed for [finish-story] command");
 	}
+	console.log(`[finish-story] storyId: ${storyId}`);
 	const me = await getMe();
 	void updateStoryStatus({
 		personId: me.id,

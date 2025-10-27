@@ -148,7 +148,7 @@ describe("story-api", () => {
 					body: JSON.stringify({
 						query: queryGetStory,
 						variables: {
-							id: 1000000,
+							storyId: 1000000,
 							projectId: "10000001",
 						},
 					}),

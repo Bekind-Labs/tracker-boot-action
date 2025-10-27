@@ -61,7 +61,7 @@ export const getStory = async (storyId: number): Promise<Story> => {
 	const response = await fetch(
 		`${url}/graphql`,
 		graphQlRequest(queryGetStory, {
-			id: storyId,
+			storyId,
 			projectId,
 		}),
 	);

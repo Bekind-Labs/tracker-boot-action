@@ -7,10 +7,7 @@ query getMe {
 `;
 
 export const queryGetStory = `
-query GetStory(
-	$projectId: ID!,
-	$storyId: ID!
-) {
+query getStory($projectId: ID!, $storyId: ID!) {
 	story(projectId: $projectId, storyId: $storyId) {
 		id
 	  status

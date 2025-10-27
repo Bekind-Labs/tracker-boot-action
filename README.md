@@ -7,15 +7,14 @@ A GitHub Action that automatically manages Tracker Boot story statuses based on 
 - 🚀 **Automatic Story Starting**: Automatically starts stories when commits are pushed
 - ✅ **Story Completion**: Marks stories as finished when success criteria are met
 - 🔔 **CI Failure Notifications**: Notifies Tracker Boot when CI pipelines fail
-- 🔍 **Smart ID Detection**: Extracts story IDs from commit messages automatically
 
 ## Usage
 
 ### Prerequisites
 
-1. A Tracker Boot account and API token
-2. A GitHub repository with GitHub Actions enabled
-3. Story IDs in your Tracker Boot project (9-digit numbers, e.g., 200011863)
+- A Tracker Boot account and API token
+- A GitHub repository with GitHub Actions enabled
+- Story IDs in your Tracker Boot project (9-digit numbers, e.g., 200011863)
 
 ### Setup
 
@@ -199,45 +198,11 @@ You can test the action using the provided test script:
 Or manually trigger the test workflow via GitHub UI:
 **Actions** → **Test Custom Action** → **Run workflow**
 
-### Matrix Testing
-
-The action can be tested with different scenarios using matrix strategy:
-
-```yaml
-jobs:
-  test-scenarios:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        test-case:
-          - { job: "success", commit: "[Finished #200011863] test complete" }
-          - { job: "failure", commit: "[#200011863] test in progress" }
-    steps:
-      - uses: actions/checkout@v4
-      
-      - name: Simulate Job Result
-        if: ${{ matrix.test-case.job == 'failure' }}
-        run: exit 1
-      
-      - name: Run Action
-        uses: ./
-        if: always()
-        with:
-          tracker-boot-api-token: ${{ secrets.TRACKER_BOOT_API_TOKEN }}
-          project-id: "100000025"
-          job-status: ${{ job.status }}
-```
-
 ## Troubleshooting
 
 - **Check**: Ensure commit message contains a 9-digit story ID
 - **Check**: Verify the story ID exists in your Tracker Boot project
 - **Check**: Confirm the API token has proper permissions
-
-## Requirements
-
-- **GitHub Actions**: Enabled in your repository
-- **Tracker Boot Account**: With API access
 
 ## License
 
@@ -246,7 +211,3 @@ See [LICENSE](LICENSE) file for details.
 ## Support
 
 For issues, questions, or feature requests, please open an issue in the GitHub repository.
-
----
-
-**Note**: This action requires access to Tracker Boot API. Ensure your API token is kept secure using GitHub Secrets.

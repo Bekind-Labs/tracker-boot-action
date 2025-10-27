@@ -195,8 +195,14 @@ You can test the action using the provided test script:
 ./action.test.sh
 ```
 
-Or manually trigger the test workflow via GitHub UI:
-**Actions** → **Test Custom Action** → **Run workflow**
+You can change your commit message in the test script.
+
+```bash
+# add testing cases here
+test_commit_messages=(
+    "[Finished #200011863] logging for action"
+)
+```
 
 ## Troubleshooting
 

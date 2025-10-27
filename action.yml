@@ -22,16 +22,18 @@ runs:
       shell: bash
       working-directory: scripts
       run: npm ci
-    - name: extract story id and status from commit message
+    - name: extract story id from commit message
       id: check_commit
       shell: bash
       run: |
         COMMIT_MSG="${{ github.event.head_commit.message }}"
-
         EXTRACTED_ID=$(echo "$COMMIT_MSG" | grep -oP '\b\#?\K\d{9,}\b' || true)
         FIRST_ID=$(echo "$EXTRACTED_ID" | head -n 1)
         echo "story_id=$FIRST_ID" >> $GITHUB_OUTPUT
-        
+    - name: extract status from commit message
+      id: check_commit
+      shell: bash
+      run: |
         IS_FINISHED=$(echo "$COMMIT_MSG" | grep -iPc '\b(finished|finish|finishes)\b\s+\#?\b\d{9}\b' || true)
         if [ "$IS_FINISHED" -gt 0 ]; then
           echo "is_finished=true" >> $GITHUB_OUTPUT

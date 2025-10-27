@@ -23,7 +23,7 @@ runs:
       working-directory: scripts
       run: npm ci
     - name: extract story id from commit message
-      id: check_commit
+      id: story_id
       shell: bash
       run: |
         COMMIT_MSG="${{ github.event.head_commit.message }}"
@@ -31,7 +31,7 @@ runs:
         FIRST_ID=$(echo "$EXTRACTED_ID" | head -n 1)
         echo "story_id=$FIRST_ID" >> $GITHUB_OUTPUT
     - name: extract status from commit message
-      id: check_commit
+      id: story_status
       shell: bash
       run: |
         IS_FINISHED=$(echo "$COMMIT_MSG" | grep -iPc '\b(finished|finish|finishes)\b\s+\#?\b\d{9}\b' || true)
@@ -43,24 +43,24 @@ runs:
     - name: start story
       shell: bash
       working-directory: scripts
-      if: ${{ steps.check_commit.outputs.is_finished == 'false' }}
+      if: ${{ steps.story_status.outputs.is_finished == 'false' }}
       env:
         TRACKER_BOOT_URL: 'https://trackerboot.com'
         TRACKER_BOOT_API_TOKEN: ${{ inputs.tracker-boot-api-token }}
         PROJECT_ID: ${{ inputs.project-id }}
-        STORY_ID: ${{ steps.check_commit.outputs.story_id }}
+        STORY_ID: ${{ steps.story_id.outputs.story_id }}
       run: |
         echo "Update story status to 'Started'. If story already started, this will be no-op."
         npm run action -- start-story $STORY_ID
     - name: finish story
       shell: bash
       working-directory: scripts
-      if: ${{ inputs.job-status == 'success' && steps.check_commit.outputs.is_finished == 'true' }}
+      if: ${{ inputs.job-status == 'success' && steps.story_status.outputs.is_finished == 'true' }}
       env:
         TRACKER_BOOT_URL: 'https://trackerboot.com'
         TRACKER_BOOT_API_TOKEN: ${{ inputs.tracker-boot-api-token }}
         PROJECT_ID: ${{ inputs.project-id }}
-        STORY_ID: ${{ steps.check_commit.outputs.story_id }}
+        STORY_ID: ${{ steps.story_id.outputs.story_id }}
       run: |
         echo "Update story status to 'Finished'. If story already started, this will be no-op."
         npm run action -- finish-story $STORY_ID

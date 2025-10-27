@@ -9,7 +9,7 @@ fi
 
 # add testing cases here
 test_commit_messages=(
-    "[finished 200011846] some test"
+    "[Finished #200011863] logging for action"
 )
 
 TEMP_EVENT_FILE="temp-event.json"

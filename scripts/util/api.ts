@@ -1,4 +1,4 @@
-export const mutationRequest = (query: string, variables: unknown) => {
+export const graphQlRequest = (query: string, variables: unknown) => {
 	return {
 		method: "POST",
 		headers: {

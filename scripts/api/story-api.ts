@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
-import { mutationRequest } from "../util/api.ts";
-import { mutationCreateStory, mutationUpdateStoryStatus } from "./graphql/mutation.ts"
+import { graphQlRequest } from "../util/api.ts";
+import { mutationCreateStory, mutationUpdateStoryStatus } from "./graphql/mutation.ts";
+import { queryGetStory } from "./graphql/query.ts";
 
 const print = async ({
 	url,
@@ -23,7 +24,7 @@ export const createStory = async (request: CreateStory) => {
 	const projectId = process.env.PROJECT_ID;
 	const response = await fetch(
 		`${url}/graphql`,
-		mutationRequest(mutationCreateStory, {
+		graphQlRequest(mutationCreateStory, {
 			...request,
 			projectId,
 			commandId: uuidv4(),
@@ -40,7 +41,7 @@ export const updateStoryStatus = async (request: UpdateStoryStatus) => {
 	const projectId = process.env.PROJECT_ID;
 	const response = await fetch(
 		`${url}/graphql`,
-		mutationRequest(mutationUpdateStoryStatus, {
+		graphQlRequest(mutationUpdateStoryStatus, {
 			...request,
 			projectId,
 			commandId: uuidv4(),
@@ -52,6 +53,26 @@ export const updateStoryStatus = async (request: UpdateStoryStatus) => {
 		);
 	}
 	await print({ url, projectId, response });
+};
+
+export const getStory = async (storyId: number): Promise<Story> => {
+	const url = process.env.TRACKER_BOOT_URL;
+	const projectId = process.env.PROJECT_ID;
+	const response = await fetch(
+		`${url}/graphql`,
+		graphQlRequest(queryGetStory, {
+			id: storyId,
+			projectId,
+		}),
+	);
+	if (!response.ok) {
+		throw new Error(`failed to get story, status: ${response.status}`);
+	}
+	const result = await response.json();
+	return {
+		id: result.data.story.id,
+		status: result.data.story.status,
+	};
 };
 
 export type CreateStory = {
@@ -66,3 +87,17 @@ export type UpdateStoryStatus = {
 	id: number;
 	status: string;
 };
+
+export type Story = {
+	id: number;
+	status: StoryStatus;
+};
+
+export type StoryStatus =
+	| "Unscheduled"
+	| "Unstarted"
+	| "Started"
+	| "Finished"
+	| "Delivered"
+	| "Accepted"
+	| "Rejected";

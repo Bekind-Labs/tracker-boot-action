@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { mockResponse } from "../testUtil/api.ts";
 import { mutationCreateStory, mutationUpdateStoryStatus } from "./graphql/mutation.ts";
+import { queryGetStory } from "./graphql/query.ts";
 import * as sut from "./story-api.ts";
 
 vi.mock("uuid", () => ({
@@ -123,6 +124,57 @@ describe("story-api", () => {
 						status: "Finished",
 					}),
 				).rejects.toThrow(`failed to update story status, status: ${status}`);
+			},
+		);
+	});
+
+	describe("getStory", () => {
+		test("when getStory, then fetch API is called", async () => {
+			const expected = {
+				data: { story: { id: 1000000, status: "Unstarted" } },
+			};
+			vi.mocked(fetch).mockResolvedValue(mockResponse(200, expected));
+
+			await sut.getStory(1000000);
+
+			expect(fetch).toHaveBeenCalledWith(
+				"https://dev-tracker-boot.com/graphql",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer api-token",
+					},
+					body: JSON.stringify({
+						query: queryGetStory,
+						variables: {
+							id: 1000000,
+							projectId: "10000001",
+						},
+					}),
+				},
+			);
+		});
+
+		test("when getStory, then fetch story", async () => {
+			const expected = {
+				data: { story: { id: 1000000, status: "Unstarted" } },
+			};
+			vi.mocked(fetch).mockResolvedValue(mockResponse(200, expected));
+
+			const result = await sut.getStory(1000000);
+
+			expect(result).toEqual({ id: 1000000, status: "Unstarted" });
+		});
+
+		test.each([400, 401, 403, 404, 500])(
+			"given server response is not ok with %s status, when getMe, then throw error",
+			async (status) => {
+				vi.mocked(fetch).mockResolvedValue(mockResponse(status, {}));
+
+				await expect(sut.getStory(1000000)).rejects.toThrow(
+					`failed to get story, status: ${status}`,
+				);
 			},
 		);
 	});

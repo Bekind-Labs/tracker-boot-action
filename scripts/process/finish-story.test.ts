@@ -9,7 +9,7 @@ describe("finish-story", () => {
 		spyGetMe = vi.spyOn(userApi, "getMe").mockResolvedValue({ id: 1000 });
 	});
 
-	test("run finish-story, then update story status", async () => {
+	test("when run finish-story, then update story status", async () => {
 		const spyUpdateStoryStatus = vi.spyOn(storyApi, "updateStoryStatus");
 
 		await sut.run("1000001");

@@ -13,7 +13,7 @@ const print = async ({
 	response: Response;
 }) => {
 	const result = await response.json();
-	console.log({ result: JSON.stringify(result) });
+	console.log("mutate story: ", { result: JSON.stringify(result) });
 	const storyId = result.data.executeCommand.data[0].id;
 	console.log(
 		`Tracker Boot story link - ${url}/projects/${projectId}/stories/${storyId}`,
@@ -70,6 +70,7 @@ export const getStory = async (storyId: number): Promise<Story> => {
 		throw new Error(`failed to get story, status: ${response.status}`);
 	}
 	const result = await response.json();
+	console.log("story status: ", { result: JSON.stringify(result) });
 	return {
 		id: result.data.story.id,
 		status: result.data.story.status,

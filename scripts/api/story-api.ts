@@ -13,6 +13,7 @@ const print = async ({
 	response: Response;
 }) => {
 	const result = await response.json();
+	console.log({ result: JSON.stringify(result) });
 	const storyId = result.data.executeCommand.data[0].id;
 	console.log(
 		`Tracker Boot story link - ${url}/projects/${projectId}/stories/${storyId}`,

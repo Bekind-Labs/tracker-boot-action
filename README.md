@@ -14,7 +14,7 @@ A GitHub Action that automatically manages Tracker Boot story statuses based on 
 
 - A Tracker Boot account and API token
 - A GitHub repository with GitHub Actions enabled
-- Story IDs in your Tracker Boot project (9-digit numbers, e.g., 200011863)
+- Project ID in your tracker boot project URL
 
 ### Setup
 
@@ -46,13 +46,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      
-      - name: Run Tests
-        run: |
-          # Your build and test commands here
-          npm install
-          npm test
-      
+
+      ... other steps
+
       - name: Update Tracker Boot Status
         uses: Bekind-Labs/tracker-boot-action@v1
         if: always()  # Run even if previous steps fail

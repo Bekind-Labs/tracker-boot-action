@@ -21,17 +21,18 @@ runs:
         node-version: 24
     - name: install dependencies
       shell: bash
-      working-directory: scripts
-      run: npm ci
+      run: |
+        cd ${{ github.action_path }}/scripts
+        npm ci
     - name: notify failed CI
       shell: bash
-      working-directory: scripts
       env:
         TRACKER_BOOT_URL: 'https://trackerboot.com'
         TRACKER_BOOT_API_TOKEN: ${{ inputs.tracker-boot-api-token }}
         PROJECT_ID: ${{ inputs.project-id }}
       if: ${{ inputs.job-status == 'failure' && github.run_attempt == 1}}
       run: |
+        cd ${{ github.action_path }}/scripts
         echo "Pipeline is failed. Report CI failure via Tracker Boot."
         WORKFLOW_URL="${{ github.SERVER_URL }}/${{ github.REPOSITORY }}/actions/runs/${{ github.RUN_ID }}"
         COMMIT_URL="${{ github.SERVER_URL }}/${{ github.REPOSITORY }}/commit/${{ github.SHA }}"

@@ -21,8 +21,9 @@ runs:
         node-version: 24
     - name: install dependencies
       shell: bash
-      working-directory: scripts
-      run: npm ci
+      run: |
+        cd ${{ github.action_path }}/scripts
+        npm ci
     - name: extract story id from commit message
       id: story_id
       shell: bash
@@ -49,7 +50,6 @@ runs:
         fi
     - name: start story
       shell: bash
-      working-directory: scripts
       if: ${{ inputs.job-status == 'success' }}
       env:
         TRACKER_BOOT_URL: 'https://trackerboot.com'
@@ -57,11 +57,11 @@ runs:
         PROJECT_ID: ${{ inputs.project-id }}
         STORY_ID: ${{ steps.story_id.outputs.story_id }}
       run: |
+        cd ${{ github.action_path }}/scripts
         echo "Update story status to 'Started'. If story already started, this will be no-op."
         npm run action -- start-story $STORY_ID
     - name: finish story
       shell: bash
-      working-directory: scripts
       if: ${{ inputs.job-status == 'success' && steps.extract_keyword.outputs.keyword != '' }}
       env:
         TRACKER_BOOT_URL: 'https://trackerboot.com'
@@ -69,6 +69,7 @@ runs:
         PROJECT_ID: ${{ inputs.project-id }}
         STORY_ID: ${{ steps.story_id.outputs.story_id }}
       run: |
+        cd ${{ github.action_path }}/scripts
         echo "Found keyword: ${{ steps.extract_keyword.outputs.keyword }}"
         if [[ "${{ steps.extract_keyword.outputs.keyword }}" == "finish"* ]]; then
           npm run action -- finish-story $STORY_ID finish

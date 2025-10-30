@@ -10,34 +10,34 @@ const handleNotMatched = (command: string | undefined) => {
 	throw new Error(`command is not existed. command: ${command}`);
 };
 
-const handleCommand = () => {
+const handleCommand = async () => {
 	const command = process.argv[2];
 
 	if (command === "start-story") {
 		const storyId = process.argv[3];
-		void startStory.run(storyId);
+		await startStory.run(storyId);
 	} else if (command === "finish-story") {
 		const storyId = process.argv[3];
 		const keyword = process.argv[4];
 		console.log(`[finish-story] keyword: ${keyword}`);
-		void finishStory.run(storyId, keyword as KeywordType);
+		await finishStory.run(storyId, keyword as KeywordType);
 	} else if (command === "notify-failed-ci") {
 		const workflowUrl = process.argv[3];
 		const commitUrl = process.argv[4];
 		const commitHash = process.argv[5];
-		void notifyFailedCI.run({ workflowUrl, commitUrl, commitHash });
+		await notifyFailedCI.run({ workflowUrl, commitUrl, commitHash });
 	} else {
 		handleNotMatched(command);
 	}
 };
 
-export const main = () => {
+export const main = async () => {
 	try {
-		handleCommand();
+		await handleCommand();
 	} catch (error: unknown) {
 		console.error((error as Error).message);
 	}
 	return 0;
 };
 
-main();
+await main();

@@ -9,16 +9,16 @@ describe("main", () => {
 		process.argv = ["node", "script/main.ts"];
 	});
 
-	test("finish-story command run finish-story process", () => {
+	test("finish-story command run finish-story process", async () => {
 		process.argv.push("finish-story", "200011756", "finished");
 		const spyFinishStoryRun = vi.spyOn(finishStory, "run");
 
-		sut.main();
+		await sut.main();
 
 		expect(spyFinishStoryRun).toHaveBeenCalledWith("200011756", "finished");
 	});
 
-	test("given story id is not existed, when finish-story command, then exit process without call", () => {
+	test("given story id is not existed, when finish-story command, then exit process without call", async () => {
 		process.argv.push("finish-story");
 		console.error = vi.fn();
 		const spyFinishStoryRun = vi
@@ -27,7 +27,7 @@ describe("main", () => {
 				throw new Error("[story-id] is not existed for [finish-story] command");
 			});
 
-		sut.main();
+		await sut.main();
 
 		expect(spyFinishStoryRun).toHaveBeenCalledWith(undefined, undefined);
 		expect(console.error).toHaveBeenCalledWith(
@@ -35,16 +35,16 @@ describe("main", () => {
 		);
 	});
 
-	test("start-story command run start-story process", () => {
+	test("start-story command run start-story process", async () => {
 		process.argv.push("start-story", "200011756");
 		const spyStartStoryRun = vi.spyOn(startStory, "run");
 
-		sut.main();
+		await sut.main();
 
 		expect(spyStartStoryRun).toHaveBeenCalledWith("200011756");
 	});
 
-	test("given story id is not existed, when start-story command, then exit process without call", () => {
+	test("given story id is not existed, when start-story command, then exit process without call", async () => {
 		process.argv.push("start-story");
 		console.error = vi.fn();
 		const spyStartStoryRun = vi
@@ -53,7 +53,7 @@ describe("main", () => {
 				throw new Error("[story-id] is not existed for [start-story] command");
 			});
 
-		sut.main();
+		await sut.main();
 
 		expect(spyStartStoryRun).toHaveBeenCalledWith(undefined);
 		expect(console.error).toHaveBeenCalledWith(
@@ -61,7 +61,7 @@ describe("main", () => {
 		);
 	});
 
-	test("notify-failed-ci command run notify-failed-ci process", () => {
+	test("notify-failed-ci command run notify-failed-ci process", async () => {
 		process.argv.push(
 			"notify-failed-ci",
 			"https://github.com/actions/pipeline/id",
@@ -70,7 +70,7 @@ describe("main", () => {
 		);
 		const spyNotifyFailedCI = vi.spyOn(notifyFailedCI, "run");
 
-		sut.main();
+		await sut.main();
 
 		expect(spyNotifyFailedCI).toHaveBeenCalledWith({
 			workflowUrl: "https://github.com/actions/pipeline/id",
@@ -80,7 +80,7 @@ describe("main", () => {
 		});
 	});
 
-	test("given action workflow url is not existed, when notify-failed-ci command, then exit process without call", () => {
+	test("given action workflow url is not existed, when notify-failed-ci command, then exit process without call", async () => {
 		process.argv.push("notify-failed-ci");
 		console.error = vi.fn();
 		const spyFinishStoryRun = vi
@@ -91,7 +91,7 @@ describe("main", () => {
 				);
 			});
 
-		sut.main();
+		await sut.main();
 
 		expect(spyFinishStoryRun).toHaveBeenCalledWith({
 			workflowUrl: undefined,
@@ -108,13 +108,13 @@ describe("main", () => {
 		{ command: [], expectedCommand: "undefined" },
 	])(
 		"given command is not existed or undefined, when main, then exit process without call",
-		({ command, expectedCommand }) => {
+		async ({ command, expectedCommand }) => {
 			process.argv.push(...command);
 			const spyFinishStoryRun = vi.spyOn(finishStory, "run");
 			const spyNotifyFailedCI = vi.spyOn(notifyFailedCI, "run");
 			console.error = vi.fn();
 
-			sut.main();
+			await sut.main();
 
 			expect(spyFinishStoryRun).not.toHaveBeenCalled();
 			expect(spyNotifyFailedCI).not.toHaveBeenCalled();

@@ -23,10 +23,7 @@ runs:
       shell: bash
       run: |
         cd ${{ github.action_path }}
-        cd ..
-        ls -al
-        cd scripts
-        ls -al
+        cd ../scripts
         npm ci
     - name: extract story id from commit message
       id: story_id
@@ -61,7 +58,8 @@ runs:
         PROJECT_ID: ${{ inputs.project-id }}
         STORY_ID: ${{ steps.story_id.outputs.story_id }}
       run: |
-        cd ${{ github.action_path }}/scripts
+        cd ${{ github.action_path }}
+        cd ../scripts
         echo "Update story status to 'Started'. If story already started, this will be no-op."
         npm run action -- start-story $STORY_ID
     - name: finish story
@@ -73,7 +71,8 @@ runs:
         PROJECT_ID: ${{ inputs.project-id }}
         STORY_ID: ${{ steps.story_id.outputs.story_id }}
       run: |
-        cd ${{ github.action_path }}/scripts
+        cd ${{ github.action_path }}
+        cd ../scripts
         echo "Found keyword: ${{ steps.extract_keyword.outputs.keyword }}"
         if [[ "${{ steps.extract_keyword.outputs.keyword }}" == "finish"* ]]; then
           npm run action -- finish-story $STORY_ID finish

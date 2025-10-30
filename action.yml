@@ -1,2 +1,9 @@
 name: 'Tracker Boot Action'
 description: 'Integration with Tracker Boot'
+runs:
+  using: 'composite'
+  steps:
+    - name: Show help message
+      shell: bash
+      run: |
+        echo "Check the README.md for usage."

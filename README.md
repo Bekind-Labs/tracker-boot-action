@@ -68,7 +68,7 @@ jobs:
       - run: npm test
 
       - name: Update Tracker Boot Story Status
-        uses: bekindlabs/tracker-boot-action/update-story-status@main
+        uses: Bekind-Labs/tracker-boot-action/update-story-status@main
         if: always()  # Run even if previous steps fail
         with:
           tracker-boot-api-token: ${{ secrets.TRACKER_BOOT_API_TOKEN }}
@@ -99,7 +99,7 @@ jobs:
       - run: npm test
 
       - name: Report Workflow Failure
-        uses: bekindlabs/tracker-boot-action/report-workflow-failure@main
+        uses: Bekind-Labs/tracker-boot-action/report-workflow-failure@main
         if: always()
         with:
           tracker-boot-api-token: ${{ secrets.TRACKER_BOOT_API_TOKEN }}
@@ -130,7 +130,7 @@ jobs:
       - run: npm test
 
       - name: Update Tracker Boot Story Status
-        uses: bekindlabs/tracker-boot-action/update-story-status@main
+        uses: Bekind-Labs/tracker-boot-action/update-story-status@main
         if: always()
         with:
           tracker-boot-api-token: ${{ secrets.TRACKER_BOOT_API_TOKEN }}
@@ -138,7 +138,7 @@ jobs:
           job-status: ${{ job.status }}
 
       - name: Report Workflow Failure
-        uses: bekindlabs/tracker-boot-action/report-workflow-failure@main
+        uses: Bekind-Labs/tracker-boot-action/report-workflow-failure@main
         if: always()
         with:
           tracker-boot-api-token: ${{ secrets.TRACKER_BOOT_API_TOKEN }}

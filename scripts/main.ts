@@ -36,6 +36,7 @@ export const main = () => {
 		handleCommand();
 	} catch (error: unknown) {
 		console.error((error as Error).message);
+		return 0;
 	}
 };
 

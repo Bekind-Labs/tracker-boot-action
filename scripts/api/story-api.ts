@@ -74,6 +74,7 @@ export const getStory = async (storyId: number): Promise<Story> => {
 	return {
 		id: result.data.story.id,
 		status: result.data.story.status,
+		storyType: result.data.story.storyType,
 	};
 };
 
@@ -93,6 +94,7 @@ export type UpdateStoryStatus = {
 export type Story = {
 	id: number;
 	status: StoryStatus;
+	storyType: StoryType;
 };
 
 export type StoryStatus =
@@ -103,3 +105,5 @@ export type StoryStatus =
 	| "Delivered"
 	| "Accepted"
 	| "Rejected";
+
+export type StoryType = "Feature" | "Bug" | "Chore" | "Release" | "Design";

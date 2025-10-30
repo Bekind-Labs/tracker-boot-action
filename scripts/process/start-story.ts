@@ -7,6 +7,12 @@ export const run = async (storyId?: string) => {
 	}
 	console.log(`[start-story] storyId: ${storyId}`);
 	const story = await getStory(Number(storyId));
+	if (story.storyType === "Release") {
+		console.log(
+			`[start-story] Release storyType is not to update story status`,
+		);
+		return;
+	}
 	if (story.status === "Unstarted") {
 		const me = await getMe();
 		void updateStoryStatus({

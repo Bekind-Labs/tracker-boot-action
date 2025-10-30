@@ -158,13 +158,19 @@ describe("story-api", () => {
 
 		test("when getStory, then fetch story", async () => {
 			const expected = {
-				data: { story: { id: 1000000, status: "Unstarted" } },
+				data: {
+					story: { id: 1000000, status: "Unstarted", storyType: "Feature" },
+				},
 			};
 			vi.mocked(fetch).mockResolvedValue(mockResponse(200, expected));
 
 			const result = await sut.getStory(1000000);
 
-			expect(result).toEqual({ id: 1000000, status: "Unstarted" });
+			expect(result).toEqual({
+				id: 1000000,
+				status: "Unstarted",
+				storyType: "Feature",
+			});
 		});
 
 		test.each([400, 401, 403, 404, 500])(

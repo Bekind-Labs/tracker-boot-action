@@ -1,4 +1,5 @@
 name: 'Action for Tracker Boot'
+description: 'Update Tracker Boot story status'
 
 inputs:
   tracker-boot-api-token:
@@ -31,22 +32,25 @@ runs:
         FIRST_ID=$(echo "$EXTRACTED_ID" | head -n 1)
         echo "story_id=$FIRST_ID" >> $GITHUB_OUTPUT
     - name: extract status from commit message
-      id: story_status
+      id: extract_keyword
       shell: bash
       run: |
         COMMIT_MSG="${{ github.event.head_commit.message }}"
-        IS_FINISHED=$(echo "$COMMIT_MSG" | grep -iPc '\b(finished|finish|finishes)\b\s+\#?\b\d{9}\b' || true)
-        if [ "$IS_FINISHED" -gt 0 ]; then
-          echo "keyword for finishing story is found in commit message."
-          echo "is_finished=true" >> $GITHUB_OUTPUT
+
+        KEYWORD=$(echo "$COMMIT_MSG" | \
+          grep -oPi '\b(finish|fix)\w*\b(?=\s+\#?\b\d{9}\b)' | \
+          head -n 1 | \
+          tr '[:upper:]' '[:lower:]' || true)
+        
+        if [ -n "$KEYWORD" ]; then
+          echo "keyword=$KEYWORD" >> $GITHUB_OUTPUT
         else
-          echo "keyword for finishing story is not found in commit message."
-          echo "is_finished=false" >> $GITHUB_OUTPUT
+          echo "keyword=" >> $GITHUB_OUTPUT
         fi
     - name: start story
       shell: bash
       working-directory: scripts
-      if: ${{ steps.story_status.outputs.is_finished == 'false' }}
+      if: ${{ inputs.job-status == 'success' }}
       env:
         TRACKER_BOOT_URL: 'https://trackerboot.com'
         TRACKER_BOOT_API_TOKEN: ${{ inputs.tracker-boot-api-token }}
@@ -58,25 +62,16 @@ runs:
     - name: finish story
       shell: bash
       working-directory: scripts
-      if: ${{ inputs.job-status == 'success' && steps.story_status.outputs.is_finished == 'true' }}
+      if: ${{ inputs.job-status == 'success' && steps.extract_keyword.outputs.keyword != '' }}
       env:
         TRACKER_BOOT_URL: 'https://trackerboot.com'
         TRACKER_BOOT_API_TOKEN: ${{ inputs.tracker-boot-api-token }}
         PROJECT_ID: ${{ inputs.project-id }}
         STORY_ID: ${{ steps.story_id.outputs.story_id }}
       run: |
-        echo "Update story status to 'Finished'. If story already started, this will be no-op."
-        npm run action -- finish-story $STORY_ID
-    - name: notify failed CI
-      shell: bash
-      working-directory: scripts
-      env:
-        TRACKER_BOOT_URL: 'https://trackerboot.com'
-        TRACKER_BOOT_API_TOKEN: ${{ inputs.tracker-boot-api-token }}
-        PROJECT_ID: ${{ inputs.project-id }}
-      if: ${{ inputs.job-status == 'failure' && github.run_attempt == 1}}
-      run: |
-        echo "Pipeline is failed. Notify Tracker Boot."
-        WORKFLOW_URL="${{ github.SERVER_URL }}/${{ github.REPOSITORY }}/actions/runs/${{ github.RUN_ID }}"
-        COMMIT_URL="${{ github.SERVER_URL }}/${{ github.REPOSITORY }}/commit/${{ github.SHA }}"
-        npm run action -- notify-failed-ci $WORKFLOW_URL $COMMIT_URL ${{ github.sha }}
+        echo "Found keyword: ${{ steps.extract_keyword.outputs.keyword }}"
+        if [[ "${{ steps.extract_keyword.outputs.keyword }}" == "finish"* ]]; then
+          npm run action -- finish-story $STORY_ID finish
+        elif [[ "${{ steps.extract_keyword.outputs.keyword }}" == "fix"* ]]; then
+          npm run action -- finish-story $STORY_ID fix
+        fi

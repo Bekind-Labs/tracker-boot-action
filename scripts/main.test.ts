@@ -11,12 +11,12 @@ describe("main", () => {
 	});
 
 	test("finish-story command run finish-story process", () => {
-		process.argv.push("finish-story", "200011756");
+		process.argv.push("finish-story", "200011756", "finished");
 		const spyFinishStoryRun = vi.spyOn(finishStory, "run");
 
 		sut.main();
 
-		expect(spyFinishStoryRun).toHaveBeenCalledWith("200011756");
+		expect(spyFinishStoryRun).toHaveBeenCalledWith("200011756", "finished");
 	});
 
 	test("given story id is not existed, when finish-story command, then exit process without call", () => {
@@ -30,7 +30,7 @@ describe("main", () => {
 
 		sut.main();
 
-		expect(spyFinishStoryRun).toHaveBeenCalledWith(undefined);
+		expect(spyFinishStoryRun).toHaveBeenCalledWith(undefined, undefined);
 		expect(spyCoreSetFailed).toHaveBeenCalledWith(
 			"[story-id] is not existed for [finish-story] command",
 		);

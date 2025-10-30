@@ -23,7 +23,7 @@ for msg in "${test_commit_messages[@]}"; do
     echo "--- (Case) message: '$msg' ---"
     printf '{"head_commit": {"message": "%s"}}' "$msg" > $TEMP_EVENT_FILE
     act push -e $TEMP_EVENT_FILE \
-             -j test-all-cases \
+             -j report-workflow-failure \
              -s TRACKER_BOOT_API_TOKEN=$TRACKER_BOOT_API_TOKEN
 done
 

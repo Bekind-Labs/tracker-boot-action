@@ -8,22 +8,26 @@ on:
       - 'scripts/**'
 
 jobs:
-  test-all-cases:
+  update-story-status:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        test-case:
-          - { job: "success", commit: "${{ github.event.head_commit.message }}" }
-          - { job: "failure", commit: "${{ github.event.head_commit.message }}" }
+    steps:
+      - name: Checkout Action Code
+        uses: actions/checkout@v4
+      - name: Run Tracker Boot Action
+        uses: ./update-story-status
+        with:
+          tracker-boot-api-token: ${{ secrets.TRACKER_BOOT_API_TOKEN }}
+          project-id: "100000025"
+          job-status: ${{ job.status }}
+  report-workflow-failure:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Action Code
         uses: actions/checkout@v4
       - name: Simulate Job Failure
-        if: ${{ matrix.test-case.job == 'failure' }}
         run: exit 1
       - name: Run Tracker Boot Action
-        uses: ./
+        uses: ./report-workflow-failure
         if: always()
         with:
           tracker-boot-api-token: ${{ secrets.TRACKER_BOOT_API_TOKEN }}

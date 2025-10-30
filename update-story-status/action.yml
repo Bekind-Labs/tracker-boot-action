@@ -22,7 +22,11 @@ runs:
     - name: install dependencies
       shell: bash
       run: |
-        cd ${{ github.action_path }}/scripts
+        cd ${{ github.action_path }}
+        cd ..
+        ls -al
+        cd scripts
+        ls -al
         npm ci
     - name: extract story id from commit message
       id: story_id

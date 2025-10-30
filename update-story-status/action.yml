@@ -1,4 +1,4 @@
-name: 'Action for Tracker Boot'
+name: 'Update Story Status'
 description: 'Update Tracker Boot story status'
 
 inputs:

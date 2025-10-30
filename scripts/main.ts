@@ -1,4 +1,3 @@
-import * as core from "@actions/core";
 import dotenv from "dotenv";
 import type { KeywordType } from "./process/finish-story.ts";
 import * as finishStory from "./process/finish-story.ts";
@@ -36,7 +35,7 @@ export const main = () => {
 	try {
 		handleCommand();
 	} catch (error: unknown) {
-		core.setFailed((error as Error).message);
+		console.error((error as Error).message);
 	}
 };
 

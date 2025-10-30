@@ -1,4 +1,3 @@
-import * as core from "@actions/core";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import * as sut from "./main.ts";
 import * as finishStory from "./process/finish-story.ts";
@@ -21,7 +20,7 @@ describe("main", () => {
 
 	test("given story id is not existed, when finish-story command, then exit process without call", () => {
 		process.argv.push("finish-story");
-		const spyCoreSetFailed = vi.spyOn(core, "setFailed");
+		console.error = vi.fn();
 		const spyFinishStoryRun = vi
 			.spyOn(finishStory, "run")
 			.mockImplementation(() => {
@@ -31,7 +30,7 @@ describe("main", () => {
 		sut.main();
 
 		expect(spyFinishStoryRun).toHaveBeenCalledWith(undefined, undefined);
-		expect(spyCoreSetFailed).toHaveBeenCalledWith(
+		expect(console.error).toHaveBeenCalledWith(
 			"[story-id] is not existed for [finish-story] command",
 		);
 	});
@@ -47,7 +46,7 @@ describe("main", () => {
 
 	test("given story id is not existed, when start-story command, then exit process without call", () => {
 		process.argv.push("start-story");
-		const spyCoreSetFailed = vi.spyOn(core, "setFailed");
+		console.error = vi.fn();
 		const spyStartStoryRun = vi
 			.spyOn(startStory, "run")
 			.mockImplementation(() => {
@@ -57,7 +56,7 @@ describe("main", () => {
 		sut.main();
 
 		expect(spyStartStoryRun).toHaveBeenCalledWith(undefined);
-		expect(spyCoreSetFailed).toHaveBeenCalledWith(
+		expect(console.error).toHaveBeenCalledWith(
 			"[story-id] is not existed for [start-story] command",
 		);
 	});
@@ -83,7 +82,7 @@ describe("main", () => {
 
 	test("given action workflow url is not existed, when notify-failed-ci command, then exit process without call", () => {
 		process.argv.push("notify-failed-ci");
-		const spyCoreSetFailed = vi.spyOn(core, "setFailed");
+		console.error = vi.fn();
 		const spyFinishStoryRun = vi
 			.spyOn(notifyFailedCI, "run")
 			.mockImplementation(() => {
@@ -99,7 +98,7 @@ describe("main", () => {
 			commitUrl: undefined,
 			commitHash: undefined,
 		});
-		expect(spyCoreSetFailed).toHaveBeenCalledWith(
+		expect(console.error).toHaveBeenCalledWith(
 			"[workflow-url] is not existed for [notify-failed-ci] command",
 		);
 	});
@@ -113,13 +112,13 @@ describe("main", () => {
 			process.argv.push(...command);
 			const spyFinishStoryRun = vi.spyOn(finishStory, "run");
 			const spyNotifyFailedCI = vi.spyOn(notifyFailedCI, "run");
-			const spyCoreSetFailed = vi.spyOn(core, "setFailed");
+			console.error = vi.fn();
 
 			sut.main();
 
 			expect(spyFinishStoryRun).not.toHaveBeenCalled();
 			expect(spyNotifyFailedCI).not.toHaveBeenCalled();
-			expect(spyCoreSetFailed).toHaveBeenCalledWith(
+			expect(console.error).toHaveBeenCalledWith(
 				`command is not existed. command: ${expectedCommand}`,
 			);
 		},
